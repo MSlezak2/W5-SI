@@ -11,6 +11,6 @@ public:
 	void display_the_board();
 	int get_board_size_x();
 	int get_board_size_y();
-
+	int get_cell(int x, int y);
 };
 

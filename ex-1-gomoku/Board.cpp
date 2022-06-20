@@ -48,3 +48,8 @@ int Board::get_board_size_y()
 {
 	return board_size_y;
 }
+
+int Board::get_cell(int x, int y)
+{
+	return cells[y][x];
+}
