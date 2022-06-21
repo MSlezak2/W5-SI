@@ -4,71 +4,79 @@
 #include <iostream>
 #include <regex>
 
-void UI::make_move(Board board)
+int* UI::make_move(Board board)
 {
-	int users_move_x = -1;
-	int users_move_y = -1;
+	static int users_move[2]; // 0-th element -> x, 1st element -> y
+	/*int users_move_x = -1;
+	int users_move_y = -1;*/
 	
 	// read user's input 
 	std::string user_input;
 	std::cout << "Enter coordinates:\t";
 	std::cin >> user_input;
+	std::cin.clear(); // flush the input buffer
 
 	// validate and map to the indexes
+	map_and_validate(user_input, users_move, board);
+	std::cout << std::endl;
+
+	return users_move;
+	// TODO: Test the already taken scenario
+}
+
+void UI::map_and_validate(std::string& user_input, int users_move[], const Board& board)
+{
 	bool is_valid = false;
 
 	while (!is_valid)
 	{
-		// formatting
+		// validate based on formatting
 		is_valid = true;
 		if (!is_of_incorrect_format(user_input))
 		{
-			map_input_to_indexes(user_input, &users_move_x, &users_move_y);
+			// map input from letters-digits format into couple of int indexes
+			map_input_to_indexes(user_input, users_move);
 		}
 		else
 		{
 			is_valid = false;
 			std::cout << "Incorrect format, please try again..." << std::endl;
 			std::cin >> user_input;
-			std::cout << std::endl;
+			std::cin.clear(); // flush the input buffer
 		}
-		// range
-		if (is_valid && is_out_of_range(board, users_move_x, users_move_y))
+		// validate based on range
+		if (is_valid && is_out_of_range(board, users_move))
 		{
 			is_valid = false;
 			std::cout << "Those coordinates are out of range, please try again..." << std::endl;
 			std::cin >> user_input;
-			std::cout << std::endl;
+			std::cin.clear(); // flush the input buffer
 		}
-		// is taken?
-		if (is_valid && is_already_taken(board, users_move_x, users_move_y))
+		// validate based on is it already taken
+		if (is_valid && is_already_taken(board, users_move))
 		{
 			is_valid = false;
 			std::cout << "That place is already taken, please try again..." << std::endl;
 			std::cin >> user_input;
-			std::cout << std::endl;
+			std::cin.clear(); // flush the input buffer
 		}
 	}
-	std::cout << std::endl;
-
-	// TODO: Return array with two coordinates as elements
-	// TODO: Test the already taken scenario
 }
 
 bool UI::is_of_incorrect_format(std::string user_input) 
 {
 	bool is_of_incorrect_format = true;
 
-	std::regex correct_format("^[a-zA-Z]+[0-9]+$"); // pattern of the correct format
+	std::regex correct_format("^[a-zA-Z]+[1-9][0-9]*$"); // pattern of the correct format (without ^ and $ it would also work... ;) )
 
-	if (std::regex_search(user_input, correct_format)) {
+	if (std::regex_match(user_input, correct_format)) {
 		is_of_incorrect_format = false;
 	}
 
 	return is_of_incorrect_format;
 }
 
-void UI::map_input_to_indexes(std::string user_input, int* first_index, int* second_index)
+void UI::map_input_to_indexes(std::string user_input, int users_move[])
 {
 	std::string first_part, second_part;
 
@@ -76,8 +84,8 @@ void UI::map_input_to_indexes(std::string user_input, int* first_index, int* sec
 	parse_input(user_input, first_part, second_part);
 
 	// map to int values
-	*first_index = letters_to_int_index(first_part);
-	*second_index = stoi(second_part);
+	users_move[0] = letters_to_int_index(first_part);
+	users_move[1] = stoi(second_part) - 1;
 }
 
 void UI::parse_input(std::string& user_input, std::string& first_part, std::string& second_part)
@@ -119,15 +127,15 @@ int UI::letters_to_int_index(std::string letters)
 	return index;
 }
 
-bool UI::is_out_of_range(Board board, int users_move_x, int users_move_y)
+bool UI::is_out_of_range(Board board, int users_move[])
 {
 	bool is_out_of_range = false;
 
-	if (users_move_x >= board.get_board_size_x())
+	if (users_move[0] >= board.get_board_size_x())
 	{
 		is_out_of_range = true;
 	}
-	else if (users_move_y >= board.get_board_size_y())
+	else if (users_move[1] >= board.get_board_size_y())
 	{
 		is_out_of_range = true;
 	}
@@ -135,34 +143,14 @@ bool UI::is_out_of_range(Board board, int users_move_x, int users_move_y)
 	return is_out_of_range;
 }
 
-bool UI::is_already_taken(Board board, int users_move_x, int users_move_y)
+bool UI::is_already_taken(Board board, int users_move[])
 {
 	bool is_already_taken = false;
 
-	if (board.get_cell(users_move_x, users_move_y) != 0)
+	if (board.get_cell(users_move[0], users_move[1]) != 0)
 	{
 		is_already_taken = true;
 	}
 
 	return is_already_taken;
 }
-
-//bool is_outside_of_the_board(std::string user_input, )
-//{
-//	bool is_valid = true;
-//	
-//	char first_char = user_input.at(0);
-//	char second_char = user_input.at(1);
-//
-//	if ( !(first_char >= 'A' && first_char <= 'Z') && !(first_char >= 'a' && first_char <= 'z'))
-//	{
-//		is_valid = false;
-//	}
-//
-//	if (!(second_char >= '1' && first_char <= 'Z') && !(first_char >= 'a' && first_char <= 'z'))
-//	{
-//		is_valid = false;
-//	}
-//
-//	return is_valid;
-//}
