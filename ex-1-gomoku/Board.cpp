@@ -53,3 +53,8 @@ int Board::get_cell(int x, int y)
 {
 	return cells[y][x];
 }
+
+void Board::set_cell(int x, int y, int which_player)
+{
+	cells[y][x] = which_player;
+}

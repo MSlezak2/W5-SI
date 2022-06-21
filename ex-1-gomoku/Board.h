@@ -12,5 +12,6 @@ public:
 	int get_board_size_x();
 	int get_board_size_y();
 	int get_cell(int x, int y);
+	void set_cell(int x, int y, int which_player);
 };
 
