@@ -20,7 +20,8 @@ bool Game::has_won(int player)
 {
 	bool has_won = false;
 
-	has_won = (check_rows(player) || check_columns(player) || check_diagonals(player));
+	has_won = (check_rows(player) || check_columns(player) || check_diagonals_downhill(player) || check_diagonals_uphill(player));
+	// TODO: do a class out of it (according to what has been said during the cc workshop)
 
 	return has_won;
 }
@@ -83,19 +84,42 @@ bool Game::check_columns(int player)
 	return has_won;
 }
 
-bool Game::check_diagonals(int player)
+bool Game::check_diagonals_downhill(int player)
 {
 	bool has_won = false;
 
 	int temp_marks_in_row = 1;
 	int temp_x, temp_y;
-	// first direction ("downhill")
-
 	for (int i = 0; i <= board.get_board_size_y() - how_many_marks; i++)
 	{
-		int temp_marks_in_row = 1;
+		// main diagonal and below it
+		temp_marks_in_row = 1;
 		temp_x = 1;
-		temp_y = i+1;
+		temp_y = i + 1;
+		while (temp_x < board.get_board_size_x() && temp_y < board.get_board_size_y())
+		{
+			if (board.get_cell(temp_x, temp_y) == board.get_cell(temp_x - 1, temp_y - 1) && board.get_cell(temp_x, temp_y) == player)
+			{
+				temp_marks_in_row++;
+			}
+			else
+			{
+				temp_marks_in_row = 1;
+			}
+			if (temp_marks_in_row > 4)
+			{
+				has_won = true;
+			}
+			temp_x++;
+			temp_y++;
+		}
+	}
+	for (int i = 0; i <= board.get_board_size_x() - how_many_marks; i++)
+	{
+		// above main diagonal
+		temp_marks_in_row = 1;
+		temp_x = i + 1;
+		temp_y = 2;
 		while (temp_x < board.get_board_size_x() && temp_y < board.get_board_size_y())
 		{
 			if (board.get_cell(temp_x, temp_y) == board.get_cell(temp_x - 1, temp_y - 1) && board.get_cell(temp_x, temp_y) == player)
@@ -115,6 +139,63 @@ bool Game::check_diagonals(int player)
 		}
 	}
 
+	return has_won;
+}
+
+bool Game::check_diagonals_uphill(int player)
+{
+	bool has_won = false;
+
+	int temp_marks_in_row = 1;
+	int temp_x, temp_y;
+	for (int i = 0; i <= board.get_board_size_y() - how_many_marks; i++)
+	{
+		// main diagonal and above it
+		temp_marks_in_row = 1;
+		temp_x = 1;
+		temp_y = board.get_board_size_y() - 2 - i;
+		while (temp_x < board.get_board_size_x() && temp_y >= 0)
+		{
+			if (board.get_cell(temp_x, temp_y) == board.get_cell(temp_x - 1, temp_y + 1) && board.get_cell(temp_x, temp_y) == player)
+			{
+				temp_marks_in_row++;
+			}
+			else
+			{
+				temp_marks_in_row = 1;
+			}
+			if (temp_marks_in_row > 4)
+			{
+				has_won = true;
+			}
+			temp_x++;
+			temp_y--;
+		}
+	}
+	for (int i = 0; i <= board.get_board_size_x() - how_many_marks; i++)
+	{
+		// below main diagonal
+		temp_marks_in_row = 1;
+		temp_x = i + 1;
+		temp_y = board.get_board_size_y() - 2;
+		while (temp_x < board.get_board_size_x() && temp_y >= 0)
+		{
+			if (board.get_cell(temp_x, temp_y) == board.get_cell(temp_x - 1, temp_y + 1) && board.get_cell(temp_x, temp_y) == player)
+			{
+				temp_marks_in_row++;
+			}
+			else
+			{
+				temp_marks_in_row = 1;
+			}
+			if (temp_marks_in_row > 4)
+			{
+				has_won = true;
+			}
+			temp_x++;
+			temp_y--;
+		}
+	}
 
 	return has_won;
 }

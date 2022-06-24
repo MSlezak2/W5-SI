@@ -15,7 +15,8 @@ public:
 	bool has_won(int player);
 	bool check_rows(int player);
 	bool check_columns(int player);
-	bool check_diagonals(int player);
+	bool check_diagonals_downhill(int player);
+	bool check_diagonals_uphill(int player);
 	Board get_board();
 	//void set_board(Board board);
 	UI get_ui();
