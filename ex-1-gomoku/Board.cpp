@@ -39,6 +39,24 @@ void Board::display_the_board()
 	}
 }
 
+bool Board::is_full()
+{
+	bool is_full = true;
+
+	for (int i = 0; i < board_size_y && is_full == true; i++) // y loop
+	{
+		for (int j = 0; j < board_size_x && is_full == true; j++) // x loop
+		{
+			if (cells[i][j] == 0)
+			{
+				is_full = false;
+			}
+		}
+	}
+
+	return is_full;
+}
+
 int Board::get_board_size_x()
 {
 	return board_size_x;
@@ -58,3 +76,4 @@ void Board::set_cell(int x, int y, int which_player)
 {
 	cells[y][x] = which_player;
 }
+

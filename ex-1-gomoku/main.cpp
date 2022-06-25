@@ -7,7 +7,7 @@
 int main() 
 {
 
-	Game game = Game(10, 10, 5);
+	Game game = Game(30, 70, 5);
 	//int users_move[2];
 	//int* users_move_p = users_move;
 	//*users_move_p = *game.get_ui().make_move(game.get_board());
@@ -35,14 +35,28 @@ int main()
 	//game.mark(7, 5, 1);
 	//game.mark(8, 4, 1);
 
-	game.mark(0, 5, 1);
-	game.mark(1, 4, 1);
-	game.mark(2, 3, 1);
-	game.mark(3, 2, 1);
-	game.mark(4, 1, 1);
+	//game.mark(0, 5, 1);
+	//game.mark(1, 4, 1);
+	//game.mark(2, 3, 1);
+	//game.mark(3, 2, 1);
+	//game.mark(4, 1, 1);
 
-	game.get_board().display_the_board();
-	std::cout << game.has_won(1);
+	//game.get_board().display_the_board();
+	//std::cout << game.has_won(1);
+
+	// test: is full
+
+	for (int i = 0; i < game.get_board().get_board_size_y(); i++) // y loop
+	{
+		for (int j = 0; j < game.get_board().get_board_size_x(); j++)
+		{
+			game.mark(j, i, 1);
+		}
+	}
+
+	std::cout << game.get_board().is_full();
+
+	//game.get_ui().print_board(game.get_board());
 
 	return 0;
 }

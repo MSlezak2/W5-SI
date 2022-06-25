@@ -7,9 +7,11 @@ class UI
 {
 public:
 	int* make_move(Board board); // TODO: Maybe I should create function in class Game that invokes that function? (that would prevent from passing argument game.get_board() in main)
+	//void print_board(Board board);
 
 
 private:
+	//std::string decimal_to_hexavigesimal(int decimal_number);
 	void map_and_validate(std::string& user_input, int users_move[], const Board& board);
 	bool is_of_incorrect_format(std::string user_input);
 	void map_input_to_indexes(std::string user_input, int users_move[]);

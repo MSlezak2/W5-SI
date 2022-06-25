@@ -9,6 +9,7 @@ public:
 	Board(int board_size_x = 5, int board_size_y = 5);
 	void clear_the_board();
 	void display_the_board();
+	bool is_full();
 	int get_board_size_x();
 	int get_board_size_y();
 	int get_cell(int x, int y);
