@@ -17,8 +17,15 @@ int* UI::make_move(Board board)
 	std::cin >> user_input;
 	std::cin.clear(); // flush the input buffer
 
-	// validate and map to the indexes
-	map_and_validate(user_input, users_move, board);
+	if (user_input.compare("quit") == 0)
+	{
+		users_move[0] = -1;
+	}
+	else
+	{
+		// validate and map to the indexes
+		map_and_validate(user_input, users_move, board);
+	}
 	std::cout << std::endl;
 
 	return users_move;
@@ -57,6 +64,51 @@ void UI::print_board(Board board)
 		std::cout << std::endl;
 	}
 
+}
+
+/// <param name="which_player_won"> - 0 if there's a tie</param>
+void UI::print_result(int which_player_won)
+{
+	if (which_player_won != 0)
+	{
+		switch (which_player_won)
+		{
+		case 1:
+			std::cout << "X won!" << std::endl;
+			break;
+		case 2:
+			std::cout << "O won!" << std::endl;
+			break;
+		}
+	}
+	else
+	{
+		std::cout << "It's a tie!" << std::endl;
+	}
+}
+
+int UI::get_int()
+{
+	int number = -1;
+	std::string users_input;
+
+	while (number == -1)
+	{
+		//std::cout << "Please enter the number:" << std::endl;
+		std::cin >> users_input;
+
+		try
+		{
+			number = std::stoi(users_input);
+		}
+		catch (const std::exception&)
+		{
+			std::cout << "Something went wrong. Try again..." << std::endl;
+		}
+	}
+
+
+	return number;
 }
 
 std::string UI::decimal_to_quasi_hexavigesimal(int decimal_number)
@@ -162,8 +214,8 @@ void UI::map_input_to_indexes(std::string user_input, int users_move[])
 	parse_input(user_input, first_part, second_part);
 
 	// map to int values
-	users_move[0] = letters_to_int_index(first_part);
-	users_move[1] = stoi(second_part) - 1;
+	users_move[0] = stoi(second_part) - 1;
+	users_move[1] = letters_to_int_index(first_part);
 }
 
 void UI::parse_input(std::string& user_input, std::string& first_part, std::string& second_part)
