@@ -7,7 +7,7 @@
 int main() 
 {
 
-	Game game = Game(30, 70, 5);
+	Game game = Game(30, 900, 5);
 	//int users_move[2];
 	//int* users_move_p = users_move;
 	//*users_move_p = *game.get_ui().make_move(game.get_board());
@@ -56,7 +56,7 @@ int main()
 
 	std::cout << game.get_board().is_full();
 
-	//game.get_ui().print_board(game.get_board());
+	game.get_ui().print_board(game.get_board());
 
 	return 0;
 }

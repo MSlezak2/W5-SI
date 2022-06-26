@@ -25,63 +25,82 @@ int* UI::make_move(Board board)
 	// TODO: Test the already taken scenario
 }
 
-//void UI::print_board(Board board)
-//{
-//
-//	std::cout << "";
-//	for (int i = 0; i < board.get_board_size_x(); i++)
-//	{
-//		std::cout << " " << i + 1;
-//	}
-//	std::cout << std::endl;
-//	for (int i = 0; i < board.get_board_size_y(); i++) // y loop
-//	{
-//		// display a letter
-//		std::cout << decimal_to_hexavigesimal(i);
-//		for (int j = 0; j < board.get_board_size_x(); j++) // x loop
-//		{
-//			std::cout << " ";
-//			switch (board.get_cell(j, i)) 
-//			{
-//			case 0: // empty
-//				std::cout << ".";
-//				break;
-//			case 1: // player 1
-//				std::cout << "X";
-//				break;
-//			case 2: // player 2
-//				std::cout << "O";
-//				break;
-//			}
-//		}
-//		std::cout << std::endl;
-//	}
-//
-//}
-//
-//std::string UI::decimal_to_hexavigesimal(int decimal_number)
-//{
-//	int quotient = decimal_number;
-//	int reminder;
-//	std::string hexavigesimal_number;
-//
-//	if (decimal_number > 0)
-//	{
-//		while (quotient > 0)
-//		{
-//			reminder = quotient % 26;
-//			quotient = quotient / 26;
-//			// append reminder to the string (ASCII)
-//			hexavigesimal_number.append(1, (char) reminder + 65);
-//		}
-//	}
-//	else
-//	{
-//		hexavigesimal_number = "A";
-//	}
-//
-//	return hexavigesimal_number;
-//}
+void UI::print_board(Board board)
+{
+
+	std::cout << "";
+	for (int i = 0; i < board.get_board_size_x(); i++)
+	{
+		std::cout << " " << i + 1;
+	}
+	std::cout << std::endl;
+	for (int i = 0; i < board.get_board_size_y(); i++) // y loop
+	{
+		// display a letter
+		std::cout << decimal_to_quasi_hexavigesimal(i);
+		for (int j = 0; j < board.get_board_size_x(); j++) // x loop
+		{
+			std::cout << " ";
+			switch (board.get_cell(j, i)) 
+			{
+			case 0: // empty
+				std::cout << ".";
+				break;
+			case 1: // player 1
+				std::cout << "X";
+				break;
+			case 2: // player 2
+				std::cout << "O";
+				break;
+			}
+		}
+		std::cout << std::endl;
+	}
+
+}
+
+std::string UI::decimal_to_quasi_hexavigesimal(int decimal_number)
+{
+	// TODO: Find more professional (clean) way to do it...
+	if (decimal_number > 25)
+	{
+		decimal_number = decimal_number;
+	}
+	int quotient = decimal_number;
+	int reminder;
+	std::string hexavigesimal_number;
+
+	int iter_number = 0;
+	if (decimal_number >= 26)
+	{
+		while (quotient > 0)
+		{
+			if (quotient / 26 == 0)
+			{
+				reminder = quotient % 27;
+				quotient = quotient / 27;
+				hexavigesimal_number.insert(0, 1, (char)reminder + 64);
+			}
+			else
+			{
+				reminder = quotient % 26;
+				quotient = quotient / 26;
+				hexavigesimal_number.insert(0, 1, (char)reminder + 65);
+			}
+			iter_number++;
+		}
+	}
+	else if (decimal_number > 0 && decimal_number <= 25)
+	{
+		hexavigesimal_number.insert(0, 1, (char)decimal_number + 65);
+	}
+	else
+	{
+		hexavigesimal_number = "A";
+	}
+
+	return hexavigesimal_number;
+}
 
 void UI::map_and_validate(std::string& user_input, int users_move[], const Board& board)
 {
