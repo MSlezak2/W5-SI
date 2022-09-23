@@ -1,5 +1,6 @@
 #include "Coccus.h"
 
-Coccus::Coccus() {
-	nearby = 0.1;
+Coccus::Coccus(int x, int y) : Bacterium(x, y) {
+	nearby = 1;
+	symbol = 'C';
 }

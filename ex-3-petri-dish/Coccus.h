@@ -4,7 +4,7 @@
 class Coccus :
     public Bacterium {
 public:
-    Coccus();
+    Coccus(int x, int y);
 
 };
 

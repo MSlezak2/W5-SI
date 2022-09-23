@@ -2,50 +2,93 @@
 #include <stdexcept>
 #include <time.h>
 
-PetriDish::PetriDish(float xSize, float ySize, int noBacteria) {
+PetriDish::PetriDish(int xSize, int ySize, int noBacteria) {
 	
-	if (xSize < 0 || xSize > xSizeMax) {
+	if (0 < xSize && xSize <= X_SIZE_MAX) {
 		this->xSize = xSize;
 	} else {
-		throw std::domain_error("size (x) of the Petri Dish is too large (max: )" + std::to_string(xSizeMax));
+		throw std::domain_error("size (x) of the Petri Dish is too large (max: )" + std::to_string(X_SIZE_MAX));
 	}
 	
-	if (ySize < 0 || ySize > ySizeMax) {
+	if (0 < ySize && ySize <= Y_SIZE_MAX) {
 		this->ySize = ySize;
 	} else {
-		throw std::domain_error("size (y) of the Petri Dish is too large (max: )" + std::to_string(ySizeMax));
+		throw std::domain_error("size (y) of the Petri Dish is too large (max: )" + std::to_string(Y_SIZE_MAX));
 	}
 
-	if (noBacteria < 0 || noBacteria > xSize*10*ySize*10 ) {
+	if (0 < noBacteria && noBacteria <= xSize*ySize) {
 		this->noBacteria = noBacteria;
 	} else {
 		throw std::domain_error("incorrect number of bacteria");
+	}
+
+	//Coccus::setIsGoingToSurvive([](std::vector<Bacterium*> bacteria) { return true; });
+}
+
+PetriDish::~PetriDish() {
+	for (Bacterium* bacterium : bacteria) {
+		delete bacterium;
 	}
 }
 
 void PetriDish::init() {
 	std::srand(time(0));
-	float x, y;
+	int x, y, type;
+	Bacterium* newBacterium;
 
 	for (int i = 0; i < noBacteria; i++) {
+		// determine coordinates of the bacterium
 		do {
-			x = (rand() % (xSize*10)) / 10;
-			y = rand();
+			x = rand() % xSize;
+			y = rand() % ySize;
 		} while ( getBacteriumByCoordinates(x,y) != nullptr );
-	}
 
+		// determine the type of the bacterium
+		type = rand() % NO_TYPES;
+		switch (type) {
+		case 0:
+			newBacterium = new Bacillus(x, y);
+			break;
+		case 1:
+			newBacterium = new Coccus(x, y);
+			break;
+		case 2:
+			newBacterium = new Spirillum(x, y);
+			break;
+		}
+		bacteria.push_back(newBacterium);
+	}
 }
 
-Bacterium* PetriDish::getBacteriumByCoordinates(float x, float y) {
+void PetriDish::step() {
+	
+}
+
+Bacterium* PetriDish::getBacteriumByCoordinates(int x, int y) {
 	//Returns nullptr if no bacterium was found at the given place
 
 	Bacterium* bacterium = nullptr;
 
 	for (Bacterium* currentBacterium : bacteria) {
 		if ((*currentBacterium).getX() == x && (*currentBacterium).getY() == y) {
-			bacterium = bacterium;
+			bacterium = currentBacterium; //TODO: Should I stop looking at this point?
 		}
 	}
 
 	return bacterium;
+}
+
+bool PetriDish::isNearby(Bacterium* theBacterium, Bacterium* theOtherOne) {
+	bool isNearby{ false };
+
+	if (distanceBetweenPoints(theBacterium->getX(), theBacterium->getY(),
+		theOtherOne->getX(), theOtherOne->getY()) <= theBacterium-> getNearby()) {
+		isNearby = true;
+	}
+
+	return isNearby;
+}
+
+double PetriDish::distanceBetweenPoints(int xA, int yA, int xB, int yB) {
+	return sqrt( (xB-xA)*(xB - xA) + (yB - yA)*(yB - yA) );
 }

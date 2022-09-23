@@ -4,6 +4,6 @@
 class Bacillus :
     public Bacterium {
 public:
-    Bacillus();
+    Bacillus(int x, int y);
 };
 

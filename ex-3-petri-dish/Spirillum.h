@@ -3,6 +3,6 @@
 class Spirillum :
     public Bacterium {
 public:
-    Spirillum();
+    Spirillum(int x, int y);
 };
 
