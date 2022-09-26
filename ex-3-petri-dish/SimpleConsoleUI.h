@@ -5,7 +5,9 @@ class SimpleConsoleUI :
 public:
    
     // Inherited via UIInterface
-    virtual void printPetriDish(const PetriDish& petriDish) override;
+    virtual void printPetriDish(const PetriDish& petriDish, int stepNumber) override;
 
+private:
+    void printDetails(const PetriDish& petriDish, int stepNumber);
 };
 
