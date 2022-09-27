@@ -92,17 +92,30 @@ void PetriDish::step() {
 	}
 
 	// replicate survivors
-	int x, y;
+	int x, y, attempts;
+	int NOBacteriaBeforeReplication = bacteria.size();
 	Bacterium* newOne;
-	for (Bacterium* bacterium : bacteria) {
+
+	for (int i = 0; i < NOBacteriaBeforeReplication; i++) {
+		attempts = 0; // if program attempt to generate new coordinates too many times then break (it will probably mean
+		// there are no free spots left)
+		// TODO: Is there a better way to do it?^
 		do {
-			x = bacterium->getX() + (rand() % (2 * bacterium->getNearby() + 1) - bacterium->getNearby());
-			y = bacterium->getY() + (rand() % (2 * bacterium->getNearby() + 1) - bacterium->getNearby());
-			} while (x < 0 || y < 0 || x >= xSize || y >= ySize || isPlaceOccupied(x, y) || !isNearby(bacterium, x, y));
-		newOne = bacterium->reproduce(x,y);
-		bacteria.push_back(newOne);
-		increaseNOBacteria(newOne);
+			x = bacteria[i]->getX() + (rand() % (2 * bacteria[i]->getNearby() + 1) - bacteria[i]->getNearby());
+			y = bacteria[i]->getY() + (rand() % (2 * bacteria[i]->getNearby() + 1) - bacteria[i]->getNearby());
+			attempts++;
+		} while ((x < 0 || y < 0 || x >= xSize || y >= ySize || isPlaceOccupied(x, y) || !isNearby(bacteria[i], x, y)) && attempts < 100);
+		
+		if (attempts < 100) {
+			newOne = bacteria[i]->reproduce(x, y);
+			bacteria.push_back(newOne);
+			increaseNOBacteria(newOne);
+		}
 	}
+}
+
+bool PetriDish::isAnythingStillGoingOn() {
+	return !(noDeceasedLately == 0 && noSpawnedLately == 0);
 }
 
 Bacterium* PetriDish::getBacteriumByCoordinates(int x, int y) {

@@ -13,6 +13,7 @@ public:
 	void init();
 	void step();
 	std::vector<Bacterium*> getBacteria() const { return bacteria; };
+	bool isAnythingStillGoingOn();
 	int getXSize() const { return xSize; };
 	int getYSize() const { return ySize; };
 	int getNOBacteriaTotal() const { return noBacteriaTotal; };
