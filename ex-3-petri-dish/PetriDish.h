@@ -31,11 +31,17 @@ private:
 	const int NO_TYPES{ 3 }; // number of different species 
 	int xSize, ySize; // size of the vessel [divided by 0.1mm] TODO: Should it be int instead of float?
 	int noBacteriaTotal, noBacillus, noCoccus, noSpirillum, noDeceasedLately, noSpawnedLately;
-	
+	// TODO: I should probably extract above variables into class called SimDetails or something...
+
+	void replicateSurvivors();
+	void removeDeceased();
+	void determineSurvivors();
 	Bacterium* getBacteriumByCoordinates(int x, int y);
 	bool isNearby(Bacterium* theBacterium, Bacterium* theOtherOne);
 	bool isNearby(Bacterium* theBacterium, int x, int y);
 	double distanceBetweenPoints(int xA, int yA, int xB, int yB);
+	// TODO: Should I move 3 of the above methods to separate a class Spot or something? Along with Bacterium's
+	// x and y attributes...
 	bool isPlaceOccupied(int x, int y);
 	void decreaseNOBacteria(Bacterium* deceasedBacterium);
 	void increaseNOBacteria(Bacterium* newOne);

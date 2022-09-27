@@ -4,9 +4,26 @@
 void SimpleConsoleUI::printPetriDish(const PetriDish& petriDish, int stepNumber) {
 
 	printDetails(petriDish, stepNumber);
+	
+	prepareModel(petriDish);
+	printBoard(petriDish);
+}
 
-	char symbol{ 'X' };
-	std::vector<std::vector<char>> dishModel(petriDish.getYSize(), std::vector<char>(petriDish.getXSize(), '*'));
+void SimpleConsoleUI::printBoard(const PetriDish& petriDish) {
+
+	for (int y = 0; y < dishModel.size(); y++) {
+		for (int x = 0; x < dishModel[0].size(); x++) {
+			std::cout << dishModel[y][x];
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl << std::endl << std::endl;
+}
+
+void SimpleConsoleUI::prepareModel(const PetriDish& petriDish) {
+	char symbol{ '?' };
+	// TODO: Does the fact that I had dishModel changed to an attribute (instead of local var) make my it more clean code like?
+	dishModel = std::vector<std::vector<char>>(petriDish.getYSize(), std::vector<char>(petriDish.getXSize(), '*'));
 
 	for (Bacterium* bacterium : petriDish.getBacteria()) {
 		Bacterium::bacteriaSpecies species = bacterium->getSpecies();
@@ -23,14 +40,6 @@ void SimpleConsoleUI::printPetriDish(const PetriDish& petriDish, int stepNumber)
 		}
 		dishModel[bacterium->getY()][bacterium->getX()] = symbol;
 	}
-
-	for (int y = 0; y < dishModel.size(); y++) {
-		for (int x = 0; x < dishModel[0].size(); x++) {
-			std::cout << dishModel[y][x];
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
 }
 
 void SimpleConsoleUI::printDetails(const PetriDish& petriDish, int stepNumber) {

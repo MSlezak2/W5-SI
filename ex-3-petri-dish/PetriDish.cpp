@@ -66,7 +66,52 @@ void PetriDish::step() {
 	noDeceasedLately = 0;
 	noSpawnedLately = 0;
 
-	// determine if they are gonna survive (TODO: extract to the separate method)
+	determineSurvivors();
+	removeDeceased();
+	replicateSurvivors();
+}
+
+bool PetriDish::isAnythingStillGoingOn() {
+	return !(noDeceasedLately == 0 && noSpawnedLately == 0);
+}
+
+void PetriDish::replicateSurvivors() {
+	int x, y, attempts;
+	int NOBacteriaBeforeReplication = bacteria.size();
+	Bacterium* newOne;
+
+	for (int i = 0; i < NOBacteriaBeforeReplication; i++) {
+		attempts = 0; // if program attempt to generate new coordinates too many times then break (it will probably mean
+					  // there are no free spots left)
+					  // TODO: Is there a better way to do it?^
+		do {
+			x = bacteria[i]->getX() + (rand() % (2 * bacteria[i]->getNearby() + 1) - bacteria[i]->getNearby());
+			y = bacteria[i]->getY() + (rand() % (2 * bacteria[i]->getNearby() + 1) - bacteria[i]->getNearby());
+			attempts++;
+		} while ((x < 0 || y < 0 || x >= xSize || y >= ySize || isPlaceOccupied(x, y) || !isNearby(bacteria[i], x, y)) && attempts < 100);
+
+		if (attempts < 100) {
+			newOne = bacteria[i]->reproduce(x, y);
+			bacteria.push_back(newOne);
+			increaseNOBacteria(newOne);
+		}
+	}
+}
+
+void PetriDish::removeDeceased() {
+	// TODO: Should I use second vector for the future generation? Appending new elements is probably faster than removing
+	// them one by one 
+	for (int i = 0; i < bacteria.size(); i++) {
+		if (!bacteria[i]->isGoingToSurvive()) {
+			decreaseNOBacteria(bacteria[i]);
+			delete bacteria[i];
+			bacteria.erase(bacteria.begin() + i);
+			i--;
+		}
+	}
+}
+
+void PetriDish::determineSurvivors() {
 	std::vector<Bacterium*> neighborhood; //TODO: If I passed whole "bacteria" vector instead, I wouldn't have to create new vector every time (worse performance?)
 
 	for (Bacterium* bacterium : bacteria) {
@@ -78,44 +123,6 @@ void PetriDish::step() {
 		bacterium->determineIfIsGoingToSurvive(neighborhood);
 		neighborhood.clear();
 	}
-
-	// remove those that are not going to survive (remove from vector and delete those objects)
-	// TODO: Should I use second vector for the future generation? Appending new elements is probably faster than removing
-	// them one by one 
-	for (int i = 0; i < bacteria.size(); i++) {
-		if (!bacteria[i]->isGoingToSurvive()) {
-			decreaseNOBacteria(bacteria[i]);
-			delete bacteria[i];
-			bacteria.erase(bacteria.begin() + i);
-			i--;
-		}
-	}
-
-	// replicate survivors
-	int x, y, attempts;
-	int NOBacteriaBeforeReplication = bacteria.size();
-	Bacterium* newOne;
-
-	for (int i = 0; i < NOBacteriaBeforeReplication; i++) {
-		attempts = 0; // if program attempt to generate new coordinates too many times then break (it will probably mean
-		// there are no free spots left)
-		// TODO: Is there a better way to do it?^
-		do {
-			x = bacteria[i]->getX() + (rand() % (2 * bacteria[i]->getNearby() + 1) - bacteria[i]->getNearby());
-			y = bacteria[i]->getY() + (rand() % (2 * bacteria[i]->getNearby() + 1) - bacteria[i]->getNearby());
-			attempts++;
-		} while ((x < 0 || y < 0 || x >= xSize || y >= ySize || isPlaceOccupied(x, y) || !isNearby(bacteria[i], x, y)) && attempts < 100);
-		
-		if (attempts < 100) {
-			newOne = bacteria[i]->reproduce(x, y);
-			bacteria.push_back(newOne);
-			increaseNOBacteria(newOne);
-		}
-	}
-}
-
-bool PetriDish::isAnythingStillGoingOn() {
-	return !(noDeceasedLately == 0 && noSpawnedLately == 0);
 }
 
 Bacterium* PetriDish::getBacteriumByCoordinates(int x, int y) {
